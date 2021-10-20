@@ -1,0 +1,35 @@
+-create sprites:
+  -good:
+    -boat1
+    -boat2
+    -boat3
+    -6 weapons
+      -normal
+      -cannon
+      -machine spray
+      -dual cannon
+      -secoday light weapons
+      -blast weapon (shotgun)
+  -bad:
+    -basic enemy
+    -intermediate enemy
+    -advanced enemy
+    -boss
+  blasts:
+    -our damange
+    -enemy damage
+    -smoke
+
+-make enemys auto move to player location
+-make player shoot according to mouse location
+
+-buttons:
+  -start
+  -pause
+  -ugrades
+  -continue
+
+-later add movement to boat
+-increase speed speed in harder rounds
+
+make mape circular

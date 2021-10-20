@@ -2351,11 +2351,31 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
 
   // code/main.js
   kaboom_default();
-  loadSprite("bean", "sprites/bean.png");
-  add([
-    sprite("bean"),
+  loadSprite("player", "sprites/boat1.png");
+  var player = add([
+    sprite("player"),
     pos(80, 40),
-    area()
+    area(),
+    rotate(),
+    body(),
+    gravity(0),
+    pos(center())
   ]);
+  scene("lose", () => {
+    add([
+      text("Game Over"),
+      pos(center()),
+      origin("center")
+    ]);
+  });
+  var score = 0;
+  var scoreLabel = add([
+    text(score),
+    pos(24, 24)
+  ]);
+  action(() => {
+    score++;
+    scoreLabel.text = score;
+  });
 })();
 //# sourceMappingURL=game.js.map
