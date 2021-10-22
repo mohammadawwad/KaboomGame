@@ -12,119 +12,161 @@ loadSprite("enemy", "sprites/enemy1.png");
 
 
 
+scene("home", () => {
+  function addButton(txt, p, f) {
 
+    const btn = add([
+      text(txt, 8),
+      pos(p),
+      area({ cursor: "pointer", }),
+      scale(1),
+      origin("center"),
+    ]);
 
-// scene("home", () => {
-//   const homeLabel = add(
-//   [
-//     text("Welcome"),
-//     pos(center()),
-//     scale(0.6),
-//   ])
-//   const startLabel = add(
-//   [
-//     text("Start"),
-//     pos(center()-100),
-//     scale(0.6),
-//   ])
+    btn.clicks(f);
 
+    btn.hovers(() => {
+      const t = time() * 10;
+      btn.color = rgb(
+        wave(0, 255, t),
+        wave(0, 255, t + 2),
+        wave(0, 255, t + 4),
+      );
+      btn.scale = vec2(1.2);
+    }, () => {
+      btn.scale = vec2(1);
+      btn.color = rgb();
+    });
 
+  }
 
-// });
+  addButton("Start", center(), () => go("level1"));
+  // addButton("Quit", vec2(200, 200), () => debug.log("bye"));
 
-// go("home");
+  // reset cursor to default at frame start for easier cursor management
+  action(() => cursor("default"));
 
-
-
-
-
-
-
-
-
-
-// add a character to screen
-var speed = 70;
-const player = add(
-  [
-    sprite("player"),
-    pos(80, 40),
-    area(),
-    scale(2.0),
-    rotate(),
-    body(),
-    gravity(0),
-    pos(center()),
-    health(100),
-  ],
-  [
-    sprite("weapon"),
-    pos(80, 40),
-    rotate(),
-    body(),
-    gravity(0),
-    pos(center()),
-  ]
-);
-
-
-
-
-let score = 0;
-const scoreLabel = add([
-	text(score),
-	pos(24, 24),
-  scale(0.4),
-])
-
-// increment score every frame
-action(() => {
-	score++;
-	scoreLabel.text = "Coins: " + score;
 });
 
-let hp = 100;
-const hpLabel = add([
-	text(hp),
-	pos(24, 52),
-  scale(0.4),
-])
+go("home");
 
-// increment hp every frame
-action(() => {
-	player.hurt(1)
-  hp--;
-	hpLabel.text = "HP: " + hp;
+
+
+
+
+
+
+
+scene("level1", () => {
+  
+  // add a character to screen
+  var speed = 70;
+  const player = add(
+    [
+      sprite("player"),
+      area(),
+      scale(2.0),
+      rotate(),
+      body(),
+      gravity(0),
+      pos(center()),
+      health(100000),
+    ]
+  );
+
+  const weapon = add(
+    [
+      sprite("weapon"),
+      area(),
+      scale(2.0),
+      rotate(),
+      body(),
+      gravity(0),
+      pos(center()),
+    ]
+  );
+
+
+  const enemy = add(
+    [
+      sprite("enemy"),
+      pos(300, 40),
+      area(),
+      scale(3.0),
+      rotate(),
+      body(),
+      gravity(0),
+      health(5),
+    ]
+  );
+
+
+  let score = 0;
+  const scoreLabel = add([
+    text(score),
+    pos(24, 24),
+    scale(0.4),
+  ])
+
+  // increment score every frame
+  action(() => {
+    score++;
+    scoreLabel.text = "Coins: " + score;
+  });
+
+  let hp = 100;
+  const hpLabel = add([
+    text(hp),
+    pos(24, 52),
+    scale(0.4),
+  ])
+
+  // increment hp every frame
+  action(() => {
+    player.hurt(1)
+    hp--;
+    hpLabel.text = "HP: " + hp;
+  });
+
+  player.collides("enemy", () => {
+    player.hurt(10);
+    enemy.hurt(5)
+  });
+
+  // triggers when hp reaches 0
+  player.on("death", () => {
+      destroy(player);
+      go("lose");
+  });
+  enemy.on("death", () => {
+      destroy(enemy);
+  });
+
+
+
+  var angle;
+  keyDown("left", () => {
+      player.move(vec2(-speed, 0));
+      angle = player.angle--;
+      player.move(angle,0);
+  });
+
+  keyDown("right", () => {
+      player.move(vec2(speed, 0));
+      angle = player.angle++;
+      player.move(angle,0);
+  });
+
+  keyDown("up", () => {
+      player.move(vec2(0, -speed));
+  });
+
+  keyDown("down", () => {
+      player.move(vec2(0, speed));
+  });
+
 });
 
-// triggers when hp reaches 0
-player.on("death", () => {
-    destroy(player);
-    go("lose");
-});
-
-
-
-var angle;
-keyDown("left", () => {
-    player.move(vec2(-speed, 0));
-    angle = player.angle--;
-    player.move(angle,0);
-});
-
-keyDown("right", () => {
-    player.move(vec2(speed, 0));
-    angle = player.angle++;
-    player.move(angle,0);
-});
-
-keyDown("up", () => {
-    player.move(vec2(0, -speed));
-});
-
-keyDown("down", () => {
-    player.move(vec2(0, speed));
-});
 
 
 
@@ -136,4 +178,4 @@ scene("lose", () => {
 		pos(center()),
 		origin("center"),
 	])
-})
+});
