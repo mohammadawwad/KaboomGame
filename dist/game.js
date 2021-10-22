@@ -2350,32 +2350,79 @@ vec4 frag(vec3 pos, vec2 uv, vec4 color, sampler2D tex) {
   var kaboom_default = xn();
 
   // code/main.js
-  kaboom_default();
+  kaboom_default({
+    background: [52, 165, 235]
+  });
   loadSprite("player", "sprites/boat1.png");
+  loadSprite("weapon", "sprites/gun1.png");
+  loadSprite("enemy", "sprites/enemy1.png");
+  var speed = 70;
   var player = add([
     sprite("player"),
     pos(80, 40),
     area(),
+    scale(2),
+    rotate(),
+    body(),
+    gravity(0),
+    pos(center()),
+    health(100)
+  ], [
+    sprite("weapon"),
+    pos(80, 40),
     rotate(),
     body(),
     gravity(0),
     pos(center())
   ]);
+  var score = 0;
+  var scoreLabel = add([
+    text(score),
+    pos(24, 24),
+    scale(0.4)
+  ]);
+  action(() => {
+    score++;
+    scoreLabel.text = "Coins: " + score;
+  });
+  var hp = 100;
+  var hpLabel = add([
+    text(hp),
+    pos(24, 52),
+    scale(0.4)
+  ]);
+  action(() => {
+    player.hurt(1);
+    hp--;
+    hpLabel.text = "HP: " + hp;
+  });
+  player.on("death", () => {
+    destroy(player);
+    go("lose");
+  });
+  var angle;
+  keyDown("left", () => {
+    player.move(vec2(-speed, 0));
+    angle = player.angle--;
+    player.move(angle, 0);
+  });
+  keyDown("right", () => {
+    player.move(vec2(speed, 0));
+    angle = player.angle++;
+    player.move(angle, 0);
+  });
+  keyDown("up", () => {
+    player.move(vec2(0, -speed));
+  });
+  keyDown("down", () => {
+    player.move(vec2(0, speed));
+  });
   scene("lose", () => {
     add([
       text("Game Over"),
       pos(center()),
       origin("center")
     ]);
-  });
-  var score = 0;
-  var scoreLabel = add([
-    text(score),
-    pos(24, 24)
-  ]);
-  action(() => {
-    score++;
-    scoreLabel.text = score;
   });
 })();
 //# sourceMappingURL=game.js.map
